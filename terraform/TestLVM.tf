@@ -15,7 +15,7 @@ resource "proxmox_lxc" "lxc-test" {
         bridge = "vmbr2"
         ip = "192.168.20.15/24"  
     }
-    ostemplate = "local:debian-10.0-standard_10.0-1_amd64.tar.gz" 
+    ostemplate = "local:vztmpl/debian-10.0-standard_10.0-1_amd64.tar.gz" 
     password = "Espoir15"
     rootfs = "local:201" 
     storage = "local"
