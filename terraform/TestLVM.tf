@@ -21,5 +21,5 @@ resource "proxmox_lxc" "lxc-test" {
     rootfs = "local:201" 
     storage = "local"
     target_node = "PAR-212482"
-    unprivileged = true
+    unprivileged = false
 }
