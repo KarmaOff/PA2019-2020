@@ -1,7 +1,7 @@
 resource "proxmox_lxc" "PostgreSQL-1" { 
     hostname = "PostgreSQL-1"
-    cores = 2
-    memory = "2048"
+    cores = 4
+    memory = "4 096‬"
     swap = "2048"
     network {
         name = "eth0"
@@ -19,8 +19,8 @@ resource "proxmox_lxc" "PostgreSQL-1" {
 
 resource "proxmox_lxc" "PostgreSQL-2" { 
     hostname = "PostgreSQL-2"
-    cores = 2
-    memory = "2048"
+    cores = 4
+    memory = "4 096‬"
     swap = "2048"
     network {
         name = "eth0"
