@@ -1,0 +1,58 @@
+- name: Common pre-requisites
+  hosts: all
+  gather_facts: yes
+  tags: [common]
+  vars:
+    db_password: “onlyoffice”
+
+  tasks:
+    - name: Update repositories cache and install "postgresql" package
+      apt:
+       name: postgresql-11
+       update_cache: yes
+    - name: Update repositories cache and install "postgresql-client" package
+        apt:
+         name: postgresql-client-11
+
+    - name: drop/create cluster 11
+      shell: |
+        pg_dropcluster --stop 11 main
+        pg_createcluster -d /data/11/main 11 main
+      args:
+       executable: /bin/bash
+
+    - name: Restart service postgresql 11
+      service:
+       name: postgresql@11-main
+       state: restarted
+
+    - name: cat conf sql
+      shell: |
+        cat << EOF > /tmp/oo.sql
+        create user onlyoffice createdb;
+        alter user onlyoffice password 'onlyoffice';
+        create database onlyoffice owner onlyoffice;
+        GRANT ALL PRIVILEGES ON DATABASE onlyoffice TO onlyoffice;
+        EOF
+      args:
+       executable: /bin/bash
+
+    - name: input et rm du script sql
+      shell: |
+        sudo su -c "psql -d template1 -f /tmp/oo.sql" - postgres
+        rm /data/next.sql
+      args:
+       executable: /bin/bash
+
+    - name: conf postgresql
+      shell: |
+        sed -i -r "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/11/main/postgresql.conf
+        sed -i "/host    replication     all/d" /etc/postgresql/11/main/pg_hba.conf
+        echo "host    all       onlyoffice             192.168.0.0/24          md5" >> /etc/postgresql/11/main/pg_hba.conf
+      args:
+       executable: /bin/bash
+
+    - name: Restart service postgresql 11
+      service:
+       name: postgresql@11-main
+       state: restarted
