@@ -1,0 +1,101 @@
+- name: Lancement playbook redis
+  hosts: fmionlyo01:redisfmionlyo01
+  environment:
+   DEBIAN_FRONTEND: noninteractive
+
+
+
+  tasks:
+    - name: Update repositories cache and install "tcpdump" package
+      apt:
+       name: tcpdump
+       update_cache: yes
+
+    - name: install "sysfsutils|pip|virtualenv|setuptools" packages
+      apt:
+       pkg:
+         - sysfsutils
+         - virtualenv
+         - python3-setuptools
+         - python-setuptools
+         - python-pip
+         - python3-pip
+
+
+
+
+    - name: set redis conf (41-redis|sysfs)
+      shell: |
+        echo "vm.overcommit_memory = 1" >> /etc/sysctl.d/41-redis.conf
+        echo "net.core.somaxconn = 512" >> /etc/sysctl.d/41-redis.conf
+        echo "net.ipv4.tcp_max_syn_backlog = 511" >> /etc/sysctl.d/41-redis.conf
+        echo "vm.swappiness = 20" >> /etc/sysctl.d/41-redis.conf
+        sysctl --system
+        echo "kernel/mm/transparent_hugepage/enabled = never" >> /etc/sysfs.conf
+        echo "kernel/mm/transparent_hugepage/defrag = never" >> /etc/sysfs.conf
+        systemctl restart sysfsutils.service
+      args:
+       executable: /bin/bash
+
+    - name: Restart service sysfsutils
+      service:
+       name: sysfsutils
+       state: restarted
+
+    - name: install "redis-server" and "redis-tools" packages
+      apt:
+       pkg:
+        - redis-server
+        - redis-tools
+        - redis
+    - name: pip install redis
+      pip:
+       name: redis
+
+    - name: install "ruby" package
+      apt:
+       name: ruby
+    - debug: var=ansible_default_ipv4.address
+
+    - name: set redis.conf
+      shell: |
+        systemctl enable redis-server.service
+        sed -i "s/bind 127.0.0.1/bind {{ ansible_default_ipv4.address|quote }} 127.0.0.1/g" /etc/redis/redis.conf
+        sed -i 's/protected-mode yes/protected-mode no/g' /etc/redis/redis.conf
+        sed -i 's/# syslog-enabled no/syslog-enabled yes/g' /etc/redis/redis.conf
+        sed -i 's/# syslog-ident redis/syslog-ident redis/g' /etc/redis/redis.conf
+        sed -i 's/save 900 1/# save 900 1/g' /etc/redis/redis.conf
+        sed -i 's/save 300 10/# save 300 10/g' /etc/redis/redis.conf
+        sed -i 's/save 60 10000/# save 60 10000/g' /etc/redis/redis.conf
+      args:
+       executable: /bin/bash
+
+
+
+    - name: Restart service redis-server
+      service:
+       name: redis-server
+       state: restarted
+
+    - name: set master node for slaves
+      redis:
+       command: slave
+       master_host: 192.168.0.21
+       master_port: 6379
+      when: inventory_hostname != "redis-1"
+
+
+#   - name: ensure packages installed
+#     apt: pkg={{ item }} state=latest
+#     with_items:
+#      - make
+#      - build-essential
+
+#   - name: download latest stable redis
+#     get_url: url=http://download.redis.io/redis-stable.tar.gz dest=/tmp/redis-stable.tar.gz
+
+#   - name: untar redis
+#     command: tar zxf /tmp/redis-stable.tar.gz -C /tmp
+
+#   - name: build redis
+#     command: make -C /tmp/redis-stable
