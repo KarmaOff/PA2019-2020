@@ -1,0 +1,68 @@
+- name: Lancement playbook RabbitMQ
+  hosts:
+  environment:
+   DEBIAN_FRONTEND: noninteractive
+
+  tasks:
+    - name: Update repositories cache and install "rabbitmq-server" package
+      apt:
+        name: rabbitmq-server
+        update_cache: yes
+
+
+    - name: set rabbitmq envt (rabbitmq-env.conf|rabbitmq.conf)
+      shell: |
+        echo "NODENAME=rabbit" >> /etc/rabbitmq/rabbitmq-env.conf
+        echo "CONFIG_FILE=/etc/rabbitmq/rabbitmq.conf" >> /etc/rabbitmq/rabbitmq-env.conf
+        echo "auth_backends.1 = rabbit_auth_backend_internal" > /etc/rabbitmq/rabbitmq.conf
+        echo "auth_mechanisms.1 = PLAIN" >> /etc/rabbitmq/rabbitmq.conf
+        echo "auth_mechanisms.2 = AMQPLAIN" >> /etc/rabbitmq/rabbitmq.conf
+      args:
+       executable: /bin/bash
+
+    - name: set rabbitmq mdp
+      shell: |
+        echo 'SLDVZEDTEQFOVRWGFAPG' > /var/lib/rabbitmq/.erlang.cookie
+      args:
+       executable: /bin/bash
+
+    - name: Restart service rabbitmq-server
+      service:
+       name: rabbitmq-server
+       state: restarted
+
+    - name: rabbitmq_clustering | stop rabbitmq app
+      command: rabbitmqctl stop_app
+
+    - name: rabbitmq_clustering | reset rabbitmq
+      command: rabbitmqctl reset
+
+
+    - name: set rabbitmq conf for master
+      shell: |
+        rabbitmqctl start_app;
+        rabbitmqctl set_cluster_name rbonlyoffice
+        rabbitmqctl add_user onlyoffice onlyoffice
+
+        rabbitmqctl set_user_tags onlyoffice administrator
+
+        rabbitmqctl add_vhost onlyoffice
+
+        rabbitmqctl set_permissions -p onlyoffice onlyoffice '.*' '.*' '.*'
+
+        rabbitmq-plugins enable rabbitmq_management
+
+        rabbitmqctl set_policy -p onlyoffice ha-amq "^amq\."    '{"ha-mode":"all","queue-master-locator":"min-masters"}'
+        rabbitmqctl set_policy -p onlyoffice ha-ds "^ds\."    '{"ha-mode":"all","queue-master-locator":"min-masters"}'
+      args:
+       executable: /bin/bash
+      when: inventory_hostname = "rabbitmq-1"
+
+
+    - name: rabbitmq1_clustering | join_cluster rabbit@rabbitmq1
+      command: rabbitmqctl join_cluster rabbit@rabbitmq1
+      when: inventory_hostname != "rabbitmq-1"
+
+    - name: rabbitmq1_clustering | start rabbitmq1 app
+      command: rabbitmqctl start_app
+      when: inventory_hostname != "rabbitmq-1"
