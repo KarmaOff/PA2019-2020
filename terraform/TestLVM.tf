@@ -20,7 +20,7 @@ resource "proxmox_lxc" "lxc-test" {
     password = "Espoir15"
     vmid = "201"
     storage = "local"
-    rootfs = "local:201/vm-201-disk-0.raw,size=8G" 
+    rootfs = "local:201,size=8G" 
     target_node = "PAR-212482"
     unprivileged = false
     onboot = true
