@@ -10,8 +10,8 @@ resource "proxmox_lxc" "RedisN-1" {
     }
     ostemplate = "local:vztmpl/debian-10.0-standard_10.0-1_amd64.tar.gz" 
     password = "Espoir15"
-    vmid = "281"
-    rootfs = "local:281" 
+    vmid = "231"
+    rootfs = "local:231" 
     storage = "local"
     target_node = "PAR-212482"
     unprivileged = false
@@ -29,8 +29,8 @@ resource "proxmox_lxc" "RedisN-2" {
     }
     ostemplate = "local:vztmpl/debian-10.0-standard_10.0-1_amd64.tar.gz" 
     password = "Espoir15"
-    vmid = "281"
-    rootfs = "local:281" 
+    vmid = "232"
+    rootfs = "local:232" 
     storage = "local"
     target_node = "PAR-212482"
     unprivileged = false
