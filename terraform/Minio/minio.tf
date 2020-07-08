@@ -5,8 +5,9 @@ resource "proxmox_lxc" "Minio-1" {
     swap = "2048"
     network {
         name = "eth0"
-        bridge = "vmbr2"
-        ip = "192.168.20.61/24"  
+        bridge = "vmbr5"
+        ip = "192.168.30.61/24"
+        gw = "192.168.30.254"
     }
     ostemplate = "local:vztmpl/debian-10.0-standard_10.0-1_amd64.tar.gz" 
     password = "Espoir15"
@@ -24,8 +25,9 @@ resource "proxmox_lxc" "Minio-2" {
     swap = "2048"
     network {
         name = "eth0"
-        bridge = "vmbr2"
-        ip = "192.168.20.62/24"  
+        bridge = "vmbr5"
+        ip = "192.168.30.62/24"
+        gw = "192.168.30.254"  
     }
     ostemplate = "local:vztmpl/debian-10.0-standard_10.0-1_amd64.tar.gz" 
     password = "Espoir15"

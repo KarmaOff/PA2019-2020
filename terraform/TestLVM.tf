@@ -16,6 +16,10 @@ resource "proxmox_lxc" "lxc-test2" {
         ip = "192.168.20.16/24"
         gw = "192.168.20.254" 
     }
+    network {
+        name = "eth1"
+        bridge = "vmbr2"
+    }
     ostemplate = "local:vztmpl/template-debian_v1-0.tar.gz" 
     password = "Espoir15"
     vmid = "202"
