@@ -33,6 +33,7 @@ resource "proxmox_lxc" "lxc-test2" {
     swap = "2048"
     network {
         name = "eth0"
+        bridge = "vmbr2"
         ip = "192.168.20.16/24"
         gw = "192.168.20.254" 
     }
