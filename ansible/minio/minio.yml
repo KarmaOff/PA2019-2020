@@ -58,7 +58,7 @@
 
     - name:  deamon reload and enable service minio
       systemd:
-        state: restart
+        state: restarted
         enabled: yes
         daemon_reload: yes
         name: minio
