@@ -12,7 +12,7 @@
         
         EnvironmentFile=/etc/default/minio
         
-        ExecStart=/usr/local/bin/minio server $MINIO_OPTS $MINIO_VOLUMES MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY} MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+        ExecStart=MINIO_ACCESS_KEY=adminesgi MINIO_SECRET_KEY=adminesgi /usr/local/bin/minio server $MINIO_OPTS
         
         Restart=always
         LimitNOFILE=65536
