@@ -45,16 +45,16 @@
         mode: u=rw,g=r,o=r
 
     - name: Before Ansible 2.3, option 'dest', 'destfile' or 'name' was used instead of 'path'
-        replace:
-          path: /etc/systemd/system/minio.service
-          regexp: '${MINIO_ACCESS_KEY}'
-          replace: '{{ MINIO_ACCESS_KEY }}'
+      replace:
+        path: /etc/systemd/system/minio.service
+        regexp: '${MINIO_ACCESS_KEY}'
+        replace: '{{ MINIO_ACCESS_KEY }}'
 
     - name: Before Ansible 2.3, option 'dest', 'destfile' or 'name' was used instead of 'path'
-        replace:
-          path: /etc/systemd/system/minio.service
-          regexp: '${MINIO_SECRET_KEY}'
-          replace: '{{ MINIO_ACCESS_KEY }}'
+      replace:
+        path: /etc/systemd/system/minio.service
+        regexp: '${MINIO_SECRET_KEY}'
+        replace: '{{ MINIO_ACCESS_KEY }}'
 
     - name: installation service minio
       shell: |  
