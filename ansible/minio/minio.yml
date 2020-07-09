@@ -33,7 +33,6 @@
         MINIO_OPTS="http://{{ ipreseau_minio }}{1...{{ minio_n }}}/mnt/data{1...{{ minio_n }}}"
         MINIO_SECRET_KEY="{{ MINIO_SECRET_KEY }}"
         EOF
-      debug: var=ps.stdout_lines
       args:
        executable: /bin/bash
 
@@ -72,7 +71,6 @@
 
         # Built for ${project.name}-${project.version} (${project.name})
         EOF
-      debug: var=ps.stdout_lines
       args:
        executable: /bin/bash
 
@@ -80,7 +78,6 @@
       shell: |
         systemctl daemon-reload
         systemctl enable minio
-      debug: var=ps.stdout_lines
       args:
        executable: /bin/bash
 
