@@ -14,8 +14,9 @@ resource "proxmox_lxc" "Minio-1" {
         bridge = "vmbr5"
     }
     mountpoint {
+        volume = data1.raw
         mp = "/mnt/data1"
-        size = "80G"
+        size = 80
     }
     ostemplate = "local:vztmpl/debian-10.0-standard_10.0-1_amd64.tar.gz" 
     password = "Espoir15"
@@ -42,8 +43,9 @@ resource "proxmox_lxc" "Minio-2" {
         bridge = "vmbr5"
     }
     mountpoint {
-        mp = "/mnt/data1"
-        size = "80G"
+        volume = data2.raw
+        mp = "/mnt/data2"
+        size = 80
     }
     ostemplate = "local:vztmpl/debian-10.0-standard_10.0-1_amd64.tar.gz" 
     password = "Espoir15"
