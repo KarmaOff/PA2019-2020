@@ -10,10 +10,6 @@ resource "proxmox_lxc" "Sidekick-1" {
         ip = "192.168.30.81/24"
         gw = "192.168.30.254"
     }
-    network {
-        name = "eth1"
-        bridge = "vmbr5"
-    }
     ostemplate = "local:vztmpl/template-debian_v1-0.tar.gz" 
     password = "Espoir15"
     vmid = "381"
@@ -34,10 +30,6 @@ resource "proxmox_lxc" "Sidekick-2" {
         bridge = "vmbr5"
         ip = "192.168.30.82/24"
         gw = "192.168.30.254"  
-    }
-    network {
-        name = "eth1"
-        bridge = "vmbr5"
     }
     ostemplate = "local:vztmpl/template-debian_v1-0.tar.gz" 
     password = "Espoir15"

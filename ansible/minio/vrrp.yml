@@ -18,6 +18,11 @@
        name: "keepalived"
        update_cache: yes
 
+    - name: Update repositories cache and install "keepalived" package
+      apt:
+       name: "psmisc"
+       update_cache: yes
+
     - name: cat conf master vrrp
       shell: |
         cat << EOF > /etc/keepalived/keepalived.conf
@@ -45,7 +50,7 @@
 
         vrrp_instance {{ service_name }}-1 {
             state MASTER
-            interface eth0
+            interface {{ interface_name }}
             virtual_router_id 10
             priority 200
             advert_int 1
