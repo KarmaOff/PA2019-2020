@@ -23,6 +23,8 @@
         chmod 777 /usr/local/bin/minio
         mkdir /etc/minio
         chown minio-user:minio-user /etc/minio
+        chown minio-user /mnt/data2 &&  chmod u+rxw /mnt/data2
+        chown minio-user /mnt/data1 &&  chmod u+rxw /mnt/data1
       args:
        executable: /bin/bash
 
