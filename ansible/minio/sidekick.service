@@ -1,0 +1,23 @@
+        [Unit]
+        Description=SideKick
+        Documentation=https://github.com/minio/sidekick
+        Wants=network-online.target
+        After=network-online.target
+        AssertFileIsExecutable=/usr/local/bin/sidekick
+        
+        [Service]
+        WorkingDirectory=/usr/local/
+        User=sidekick-user
+        Group=sidekick-user
+        
+        EnvironmentFile=/etc/default/sidekick
+        
+        ExecStart=/usr/local/bin/sidekick --health-path=/minio/health/ready --address :$SIDEKICK_PORT $MINIO_OPTS:$MINIO_PORT
+        
+        Restart=always
+        LimitNOFILE=65536
+        TimeoutStopSec=infinity
+        SendSIGKILL=no
+        
+        [Install]
+        WantedBy=multi-user.target

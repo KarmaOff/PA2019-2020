@@ -28,7 +28,7 @@
       args:
        executable: /bin/bash
 
-    - name: cat conf sql
+    - name: cat conf minio
       shell: |
         cat << EOF > /etc/default/minio
         MINIO_ACCESS_KEY="{{ MINIO_ACCESS_KEY }}"
@@ -51,6 +51,11 @@
       systemd:
         enabled: yes
         daemon_reload: yes
+        name: minio
+
+    - name:  restart service minio
+      systemd:
+        state: restarted
         name: minio
 
 

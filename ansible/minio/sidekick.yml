@@ -1,0 +1,36 @@
+- name: Common pre-requisites
+  hosts: minio_nodes
+  gather_facts: yes
+  
+
+  tasks:
+    - include_vars: minio-vars.yml
+
+    - name: Install the .deb sidekick package from the github.
+      apt:
+        deb: https://github.com/minio/sidekick/releases/download/v0.4.4/sidekick_0.4.4_Linux_x86_64.deb
+
+    - name: create user for service
+      shell: |
+        useradd -r sidekick-user -s /sbin/nologin
+        chown sidekick-user:sidekick-user /usr/local/bin/sidekick
+      args:
+       executable: /bin/bash
+
+    - name: cat conf sidekick
+      shell: |
+        cat << EOF > /etc/default/sidekick
+        MINIO_OPTS="http://{{ ipreseau_minio }}{1...{{ minio_n }}}"
+        MINIO_PORT="9000"
+        SIDEKICK_PORT="9000"
+        EOF
+      args:
+       executable: /bin/bash
+    
+    - name: Copy file with owner and permission, using symbolic representation
+      copy:
+        src: /git/PA2019-2020/ansible/minio/sidekick.service
+        dest: /etc/systemd/system/
+        owner: root
+        group: root
+        mode: u=rw,g=r,o=r   
