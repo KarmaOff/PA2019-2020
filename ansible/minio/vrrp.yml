@@ -1,5 +1,5 @@
 - name: Installation et configuration du VRRP pour sidekick
-  hosts: {{ ansible_hostsgroup }}
+  hosts: "{{ ansible_hostsgroup }}"
   gather_facts: yes
   
 
