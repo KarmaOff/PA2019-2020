@@ -18,10 +18,16 @@
        name: "keepalived"
        update_cache: yes
 
-    - name: Update repositories cache and install "keepalived" package
+    - name: Update repositories cache and install "psmisc" package
       apt:
        name: "psmisc"
        update_cache: yes
+    
+    - name: cat conf master vrrp
+      shell: |
+        useradd -r keepalived_script -s /sbin/nologin
+      args:
+       executable: /bin/bash
 
     - name: cat conf master vrrp
       shell: |
