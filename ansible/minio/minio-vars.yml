@@ -5,3 +5,5 @@ ipreseau_minio: 192.168.30.6
 ip_vrrp_minio: 192.168.30.60
 ip_minio_1: 192.168.30.61
 ip_minio_2: 192.168.30.62
+minio_port: 9000
+sidekick_port: 9000

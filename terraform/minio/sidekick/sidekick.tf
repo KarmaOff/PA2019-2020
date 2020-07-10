@@ -1,5 +1,5 @@
-resource "proxmox_lxc" "Minio-1" { 
-    hostname = "Minio-1"
+resource "proxmox_lxc" "Sidekick-1" { 
+    hostname = "Sidekick-1"
     cores = 4
     memory = "4096"
     swap = "4096"
@@ -7,16 +7,12 @@ resource "proxmox_lxc" "Minio-1" {
     network {
         name = "eth0"
         bridge = "vmbr5"
-        ip = "192.168.30.61/24"
+        ip = "192.168.30.81/24"
         gw = "192.168.30.254"
     }
-    mountpoint {
-        volume = "local:80"
-        mp = "/mnt/data1"
-    }
-    mountpoint {
-        volume = "local:80"
-        mp = "/mnt/data2"
+    network {
+        name = "eth1"
+        bridge = "vmbr5"
     }
     ostemplate = "local:vztmpl/template-debian_v1-0.tar.gz" 
     password = "Espoir15"
@@ -27,8 +23,8 @@ resource "proxmox_lxc" "Minio-1" {
     unprivileged = false
 }
 
-resource "proxmox_lxc" "Minio-2" { 
-    hostname = "Minio-2"
+resource "proxmox_lxc" "Sidekick-2" { 
+    hostname = "Sidekick-2"
     cores = 4
     memory = "4096"
     swap = "4096"
@@ -36,16 +32,12 @@ resource "proxmox_lxc" "Minio-2" {
     network {
         name = "eth0"
         bridge = "vmbr5"
-        ip = "192.168.30.62/24"
+        ip = "192.168.30.82/24"
         gw = "192.168.30.254"  
     }
-    mountpoint {
-        volume = "local:80"
-        mp = "/mnt/data1"
-    }
-    mountpoint {
-        volume = "local:80"
-        mp = "/mnt/data2"
+    network {
+        name = "eth1"
+        bridge = "vmbr5"
     }
     ostemplate = "local:vztmpl/template-debian_v1-0.tar.gz" 
     password = "Espoir15"

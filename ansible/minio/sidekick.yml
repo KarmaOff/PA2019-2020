@@ -10,7 +10,7 @@
       apt:
         deb: https://github.com/minio/sidekick/releases/download/v0.4.4/sidekick_0.4.4_Linux_x86_64.deb
 
-    - name: create user for service
+    - name: create user for sidekick service
       shell: |
         useradd -r sidekick-user -s /sbin/nologin
         chown sidekick-user:sidekick-user /usr/local/bin/sidekick
@@ -21,8 +21,8 @@
       shell: |
         cat << EOF > /etc/default/sidekick
         MINIO_OPTS="http://{{ ipreseau_minio }}{1...{{ minio_n }}}"
-        MINIO_PORT="9000"
-        SIDEKICK_PORT="9000"
+        MINIO_PORT="{{ minio_port }}"
+        SIDEKICK_PORT="{{ sidekick_port }}"
         EOF
       args:
        executable: /bin/bash
