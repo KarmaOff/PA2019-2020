@@ -22,12 +22,7 @@
       apt:
        name: "psmisc"
        update_cache: yes
-    
-    - name: cat conf master vrrp
-      shell: |
-        useradd -r keepalived_script -s /sbin/nologin
-      args:
-       executable: /bin/bash
+
 
     - name: cat conf master vrrp
       shell: |
@@ -45,7 +40,6 @@
         vrrp_sync_group VG1 {
         group {
         {{ master_name }}
-        {{ slave_name }}
         }
         }
 
@@ -54,7 +48,7 @@
           interval 2 # every 2 seconds
         }
 
-        vrrp_instance {{ service_name }}-1 {
+        vrrp_instance {{ master_name }} {
             state MASTER
             interface {{ interface_name }}
             virtual_router_id 10
@@ -74,7 +68,7 @@
         EOF
       args:
        executable: /bin/bash
-      when: inventory_hostname != "{{ master_name }}"
+      when: inventory_hostname != "{{ slave_name }}"
 
     - name: cat conf slave vrrp
       shell: |
@@ -91,7 +85,6 @@
 
         vrrp_sync_group VG1 {
         group {
-        {{ master_name }}
         {{ slave_name }}
         }
         }
@@ -101,7 +94,8 @@
           interval 2 # every 2 seconds
         }
 
-        vrrp_instance {{ service_name }}-1 {
+
+        vrrp_instance {{ slave_name }} {
             state BACKUP
             interface {{ interface_name }}
             virtual_router_id 10
@@ -121,7 +115,7 @@
         EOF
       args:
        executable: /bin/bash
-      when: inventory_hostname != "{{ slave_name }}"
+      when: inventory_hostname != "{{ master_name }}"
 
     - name:  restart service keepalived
       systemd:
