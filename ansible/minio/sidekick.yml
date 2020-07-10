@@ -1,5 +1,5 @@
-- name: Common pre-requisites
-  hosts: minio_nodes
+- name: Installation et configuration sidekick
+  hosts: sidekick_nodes
   gather_facts: yes
   
 
