@@ -16,7 +16,7 @@ resource "proxmox_lxc" "Sidekick-1" {
     }
     ostemplate = "local:vztmpl/template-debian_v1-0.tar.gz" 
     password = "Espoir15"
-    vmid = "361"
+    vmid = "381"
     rootfs = "local:8" 
     storage = "local"
     target_node = "PAR-212482"
@@ -41,7 +41,7 @@ resource "proxmox_lxc" "Sidekick-2" {
     }
     ostemplate = "local:vztmpl/template-debian_v1-0.tar.gz" 
     password = "Espoir15"
-    vmid = "362"
+    vmid = "382"
     rootfs = "local:8" 
     storage = "local"
     target_node = "PAR-212482"
