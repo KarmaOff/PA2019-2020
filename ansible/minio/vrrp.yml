@@ -63,7 +63,7 @@
         EOF
       args:
        executable: /bin/bash
-      when: inventory_hostname != {{ master_name }}
+      when: inventory_hostname != "{{ master_name }}"
 
     - name: cat conf slave vrrp
       shell: |
@@ -110,7 +110,7 @@
         EOF
       args:
        executable: /bin/bash
-      when: inventory_hostname != {{ slave_name }}
+      when: inventory_hostname != "{{ slave_name }}"
 
     - name:  restart service keepalived
       systemd:
