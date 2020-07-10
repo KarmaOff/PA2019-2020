@@ -1,4 +1,4 @@
-- name: Common pre-requisites
+- name: Installation et configuration minio
   hosts: minio_nodes
   gather_facts: yes
   
