@@ -1,5 +1,5 @@
 service_name: sidekick
-vrrp_ip-CIDR: 192.168.30.80/24
+vrrp_ip_CIDR: 192.168.30.80/24
 interface_name: eth1
 master_name: sidekick-1
 slave_name: sidekick-2

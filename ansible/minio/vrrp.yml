@@ -54,7 +54,7 @@
                 auth_pass 1111
             }
             virtual_ipaddress {
-                {{ vrrp_ip-CIDR }} dev {{ interface_name }}
+                {{ vrrp_ip_CIDR }} dev {{ interface_name }}
             }
             track_script {
               chk_{{ service_name }}
@@ -101,7 +101,7 @@
                 auth_pass 1111
             }
             virtual_ipaddress {
-                {{ vrrp_ip-CIDR }} dev {{ interface_name }}
+                {{ vrrp_ip_CIDR }} dev {{ interface_name }}
             }
             track_script {
               chk_{{ service_name }}
