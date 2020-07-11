@@ -63,7 +63,19 @@
         systemctl restart sysfsutils.service
       args:
        executable: /bin/bash
-      
+
+    - name: set port redis.conf slave
+      shell: |
+        sed -i -e "s/port 6379/port 6380/g" /etc/redis/redis.conf
+      args:
+       executable: /bin/bash
+      when: inventory_hostname != "{{ master_name }}"
+
+    - name: Restart service redis-server
+      service:
+       name: redis-server
+       state: restarted
+
     - name: set master conf
       shell: |
         redis-cli -p 6379 config set requirepass Espoir15
