@@ -24,13 +24,6 @@
          - python3-pip
 
 
-
-
-    - name: Restart service sysfsutils
-      service:
-       name: sysfsutils
-       state: restarted
-
     - name: install "redis-server" and "redis-tools" packages
       apt:
        pkg:
