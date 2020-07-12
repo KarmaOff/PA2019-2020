@@ -11,8 +11,8 @@
        update_cache: yes
 
     - name: install "postgresql-client" package
-        apt:
-         name: postgresql-client-11
+      apt:
+       name: postgresql-client-11
 
     - name: drop/create cluster 11
       shell: |
