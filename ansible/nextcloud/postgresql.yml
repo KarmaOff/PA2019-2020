@@ -119,16 +119,14 @@
 
     - name: conf slave recovery
       shell: |
-        mkdir -p /var/lib/postgresql/11/main
-        chown -R postgres:postgres /var/lib/postgresql/
-        su -c "pg_basebackup -h {{ pgsql_master_ip }} -U replica -D /var/lib/postgresql/11/main -R -X --wal-method=stream" - postgres     
+        su -c "pg_basebackup -h {{ pgsql_master_ip }} -U replica -D /data/11/main -R -X --wal-method=stream" - postgres     
       args:
        executable: /bin/bash
       when: inventory_hostname != "{{ pgsql_master_name }}"
     
     - name: cat recovery.conf
       shell: |
-        cat << EOF > /var/lib/postgresql/11/main/recovery.conf
+        cat << EOF > /data/11/main/recovery.conf
         standby_mode = 'on'
         primary_conninfo = 'host={{ pgsql_master_ip }} port=5432 user=replica password=Espoir15 application_name={{ pgsql_slave_name }}'
         #restore_command = 'cp /var/lib/postgresql/11/main/archive/%f %p'
@@ -140,8 +138,7 @@
     
     - name: ch mod own slave recovery 
       shell: |
-        chmod 600 /var/lib/postgresql/11/main/recovery.conf
-        chown -R postgres:postgres /var/lib/postgresql/
+        chmod 600 /data/11/main/recovery.conf
       args:
        executable: /bin/bash
       when: inventory_hostname != "{{ pgsql_master_name }}"
