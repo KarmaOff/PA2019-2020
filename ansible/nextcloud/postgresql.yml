@@ -119,6 +119,7 @@
 
     - name: conf slave recovery
       shell: |
+        rm -rf /data/11/main/*
         su -c "pg_basebackup -h {{ pgsql_master_ip }} -U replica -D /data/11/main -R -X stream" - postgres     
       args:
        executable: /bin/bash
