@@ -111,10 +111,11 @@
        name: postgresql
        state: restarted
 
-    - name: conf salve base backup
+    - name: conf slave recovery
       shell: |
         mkdir -p /var/lib/postgresql/11/main
-        pg_basebackup -h {{ pgsql_master_ip }} -U replica -D /var/lib/postgresql/11/main 
+        chown -R postgres:postgres /var/lib/postgresql/
+        su -c "pg_basebackup -h {{ pgsql_master_ip }} -U replica -D /var/lib/postgresql/11/main" - postgres     
       args:
        executable: /bin/bash
       when: inventory_hostname != "{{ pgsql_master_name }}"
@@ -131,9 +132,10 @@
        executable: /bin/bash
       when: inventory_hostname != "{{ pgsql_master_name }}"
     
-    - name: conf salve base backup
+    - name: ch mod own slave recovery 
       shell: |
         chmod 600 /var/lib/postgresql/11/main/recovery.conf
+        chown -R postgres:postgres /var/lib/postgresql/
       args:
        executable: /bin/bash
       when: inventory_hostname != "{{ pgsql_master_name }}"
