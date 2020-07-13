@@ -33,6 +33,7 @@
         alter user nextcloud password 'nextcloud';
         create database nextcloud owner nextcloud;
         GRANT ALL PRIVILEGES ON DATABASE nextcloud TO nextcloud;
+        create user primaryuser with password 'primaryuser';
         EOF
       args:
        executable: /bin/bash
@@ -48,6 +49,7 @@
       shell: |
         sed -i -r "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/11/main/postgresql.conf
         echo "host    all       nextcloud             192.168.20.0/24          md5" >> /etc/postgresql/11/main/pg_hba.conf
+        echo "host    primaryuser    primaryuser      192.168.50.0/24          md5" >> /etc/postgresql/11/main/pg_hba.conf
       args:
        executable: /bin/bash
 
