@@ -29,6 +29,7 @@
        pkg:
         - redis-server
         - redis-tools
+        - redis-sentinel
 
     - name: pip install redis
       pip:
@@ -109,6 +110,11 @@
     - name: Restart service redis-server
       service:
        name: redis-server
+       state: restarted
+    
+    - name: Restart service redis-server
+      service:
+       name: redis-sentinel
        state: restarted
 
 #    - name: set master node for slaves
