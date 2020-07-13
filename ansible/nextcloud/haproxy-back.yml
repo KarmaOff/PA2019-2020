@@ -53,15 +53,6 @@
           errorfile 503 /etc/haproxy/errors/503.http
           errorfile 504 /etc/haproxy/errors/504.http
 
-#       listen rabbitmq
-#                bind *:5672
-#                mode tcp
-#                option          clitcpka
-#                balance roundrobin
-#                server rabbit-1 {{ rabbitmq1_ip }}:5672 check inter 5s rise 2 fall 3
-#                server rabbit-2 {{ rabbitmq1_ip }}:5672 check inter 5s rise 2 fall 3
-#                server rabbit-3 {{ rabbitmq1_ip }}:5672 check inter 5s rise 2 fall 3
-
         listen redis
                 bind *:6379
                 mode            tcp
