@@ -110,13 +110,6 @@
                         'use_path_style'=>true
                 ),
           ),
-          'dbtype' => 'pgsql',
-          'dbname' => 'nextcloud',
-          'dbhost' => '192.168.20.90',
-          'dbport' => '5432',
-          'dbtableprefix' => 'oc_',
-          'dbuser' => 'nextcloud',
-          'dbpassword' => 'nextcloud',
           'memcache.local' => '\\OC\\Memcache\\APCu',
           'memcache.distributed' => '\\OC\\Memcache\\Redis',
           'memcache.locking' => '\\OC\\Memcache\\Redis',
@@ -130,3 +123,35 @@
         EOF
       args:
        executable: /bin/bash
+
+    - name: Change file ownership, group and permissions
+      file:
+        path: /var/www/nextcloud/
+        owner: www-data
+        group: www-data
+        recurse: yes
+    
+    - name: sed for php conf
+      shell: |
+        sed -i 's/;date.timezone =/date.timezone = "Europe\/Paris" /' /etc/php/7.3/apache2/php.ini
+        sed -i 's/;opcache.enable=0/opcache.enable=1/' /etc/php/7.3/apache2/php.ini
+        sed -i 's/;opcache.enable_cli=0/opcache.enable_cli=1/' /etc/php/7.3/apache2/php.ini
+        sed -i 's/;opcache.memory_consumption=64/opcache.memory_consumption=128/' /etc/php/7.3/apache2/php.ini
+        sed -i 's/;opcache.interned_strings_buffer=4/opcache.interned_strings_buffer=8/' /etc/php/7.3/apache2/php.ini
+        sed -i 's/;opcache.max_accelerated_files=2000/opcache.max_accelerated_files=10000/' /etc/php/7.3/apache2/php.ini
+        sed -i 's/;opcache.revalidate_freq=2/opcache.revalidate_freq=1/' /etc/php/7.3/apache2/php.ini
+        sed -i 's/;opcache.save_comments=1/opcache.save_comments=1/' /etc/php/7.3/apache2/php.ini
+        sed -i 's/;date.timezone =/date.timezone = "Europe\/Paris" /' /etc/php/7.3/cli/php.inif
+      args:
+       executable: /bin/bash  
+    
+    - name: install nextcloud with occ
+      shell: |
+        sudo -u www-data php occ  maintenance:install --no-interaction --database "pgsql" --database-host "192.168.20.90:5432" --database-name "nextcloud"  --database-user "nextcloud" --database-pass "nextcloud" --admin-user "adminesgi" --admin-pass "adminesgi"
+      args:
+       executable: /bin/bash
+    
+    - name:  restart Apache2
+      service:
+       name: apache2
+       state: restarted
