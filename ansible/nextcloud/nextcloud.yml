@@ -41,7 +41,7 @@
          - php7.3-curl
          - postgresql-client-11
          - sudo 
-         
+
     - name: telechargement Nextcloud 19 tar.bz
       get_url:
         url: https://download.nextcloud.com/server/releases/nextcloud-19.0.0.tar.bz2
@@ -111,7 +111,7 @@
 
     - name: install nextcloud with occ
       shell: |
-        sudo -u www-data php occ  maintenance:install --no-interaction --database "pgsql" --database-host "192.168.20.90:5432" --database-name "nextcloud"  --database-user "nextcloud" --database-pass "nextcloud" --admin-user "adminesgi" --admin-pass "adminesgi"
+        sudo -u www-data php /var/www/nextcloud/occ  maintenance:install --no-interaction --database "pgsql" --database-host "192.168.20.90:5432" --database-name "nextcloud"  --database-user "nextcloud" --database-pass "nextcloud" --admin-user "adminesgi" --admin-pass "adminesgi"
       args:
        executable: /bin/bash
     
