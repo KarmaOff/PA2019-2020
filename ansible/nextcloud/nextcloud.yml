@@ -111,7 +111,15 @@
 
     - name: install nextcloud with occ
       shell: |
-        sudo -u www-data php /var/www/nextcloud/occ  maintenance:install --no-interaction --database "pgsql" --database-host "192.168.20.90:5432" --database-name "nextcloud"  --database-user "nextcloud" --database-pass "nextcloud" --admin-user "adminesgi" --admin-pass "adminesgi"
+        sudo -u www-data php /var/www/nextcloud/occ  maintenance:install --no-interaction --admin-user "adminesgi" --admin-pass "adminesgi"
       args:
        executable: /bin/bash
+      when: inventory_hostname == "{{ nextcloud_1_name }}"
+    
+    - name: install nextcloud with occ
+      shell: |
+        sudo -u www-data php /var/www/nextcloud/occ  maintenance:install --no-interaction 
+      args:
+       executable: /bin/bash
+      when: inventory_hostname != "{{ nextcloud_1_name }}"
     

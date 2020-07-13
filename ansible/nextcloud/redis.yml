@@ -93,6 +93,26 @@
       args:
        executable: /bin/bash
       when: inventory_hostname != "{{ master_name }}"
+    
+    - name: cat sentinel.conf master
+      shell: |
+        sed -i -e "s/sentinel monitor mymaster 127.0.0.1 6379 2/sentinel monitor {{ master_name }} {{ master_ip }} {{ master_port }} 2/g" /etc/redis/sentinel.conf
+        sed -i -e "s/# sentinel down-after-milliseconds <master-name> <milliseconds>/sentinel down-after-milliseconds {{ master_name }} 2000/g" /etc/redis/sentinel.conf
+        sed -i -e "s/# sentinel failover-timeout <master-name> <milliseconds>/sentinel failover-timeout {{ master_name }} 5000/g" /etc/redis/sentinel.conf
+        sed -i -e "s/# protected-mode no/protected-mode no/g" /etc/redis/sentinel.conf
+      args:
+       executable: /bin/bash
+      when: inventory_hostname == "{{ master_name }}"    
+
+    - name: cat sentinel.conf slave
+      shell: |
+        sed -i -e "s/sentinel monitor mymaster 127.0.0.1 6379 2/sentinel monitor {{ master_name }} {{ master_ip }} {{ master_port }} 2/g" /etc/redis/sentinel.conf
+        sed -i -e "s/# sentinel down-after-milliseconds <master-name> <milliseconds>/sentinel down-after-milliseconds {{ master_name }} 2000/g" /etc/redis/sentinel.conf
+        sed -i -e "s/# sentinel failover-timeout <master-name> <milliseconds>/sentinel failover-timeout {{ master_name }} 5000/g" /etc/redis/sentinel.conf
+        sed -i -e "s/# protected-mode no/protected-mode no/g" /etc/redis/sentinel.conf
+      args:
+       executable: /bin/bash
+      when: inventory_hostname != "{{ master_name }}" 
 
     - name: Restart service redis-server
       service:

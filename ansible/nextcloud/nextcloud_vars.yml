@@ -15,3 +15,4 @@ pgsql_slave_ip: 192.168.20.112
 rabbitmq1_ip:
 rabbitmq2_ip:
 rabbitmq3_ip:
+nextcloud_1_name: nextcloud-1

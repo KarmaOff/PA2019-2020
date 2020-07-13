@@ -74,7 +74,7 @@
                 option pgsql-check user primaryuser
                 default-server inter 3s fall 3
                 server          postgresql1 {{ pgsql_master_ip }}:5432        check port 5432
-                server          postgresql2 {{ pgsql_slave_ip }}:5432 backup check port 5432
+                server          postgresql2 {{ pgsql_slave_ip }}:5432 backup  port 5432
 
 
         EOF
