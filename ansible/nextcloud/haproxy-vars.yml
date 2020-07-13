@@ -1,0 +1,9 @@
+redis1_ip: 192.168.20.31
+redis1_port: 6379
+redis2_ip: 192.168.20.32
+redis2_port: 6380
+psql1_ip: 192.168.20.111
+psql2_ip: 192.168.20.112
+rabbitmq1_ip:
+rabbitmq2_ip:
+rabbitmq3_ip:
