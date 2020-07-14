@@ -4,3 +4,4 @@ rabbitmq_master_ip: 192.168.40.41
 pgsql_ansible_hostsgroup: psql-onlyoffice
 pgsql_master_name: pgsqlo1
 pgsql_slave_name: pgsqlo2
+segment_ip: 192.168.40.0/24
