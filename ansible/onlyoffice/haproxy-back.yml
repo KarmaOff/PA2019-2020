@@ -1,12 +1,12 @@
 - name: Lancement playbook haproxy backend
   hosts: "{{ haproxy_back_ansible_hostsgroup }}"
   gather_facts: yes
-  vars_files: onltoffice-vars.yml
+  vars_files: onlyoffice-vars.yml
 
 
 
   tasks:
-    - include_vars: onltoffice-vars.yml
+    - include_vars: onlyoffice-vars.yml
 
     - name: Update repositories cache and install "haproxy" package
       apt:
