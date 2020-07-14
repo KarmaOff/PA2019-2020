@@ -1,9 +1,13 @@
-- name: Lancement playbook RabbitMQ
-  hosts:
-  environment:
-   DEBIAN_FRONTEND: noninteractive
+- name: Lancement playbook rabbitmq
+  hosts: "{{ rabbitmq_ansible_hostsgroup }}"
+  gather_facts: yes
+  vars_files: onlyoffice-vars.yml
+
+
 
   tasks:
+    - include_vars: onlyoffice-vars.yml
+
     - name: Update repositories cache and install "rabbitmq-server" package
       apt:
         name: rabbitmq-server
@@ -56,13 +60,13 @@
         rabbitmqctl set_policy -p onlyoffice ha-ds "^ds\."    '{"ha-mode":"all","queue-master-locator":"min-masters"}'
       args:
        executable: /bin/bash
-      when: inventory_hostname = "rabbitmq-1"
+      when: inventory_hostname == "{{ rabbitmq_master_name }}"
 
 
     - name: rabbitmq1_clustering | join_cluster rabbit@rabbitmq1
       command: rabbitmqctl join_cluster rabbit@rabbitmq1
-      when: inventory_hostname != "rabbitmq-1"
+      when: inventory_hostname != "{{ rabbitmq_master_name }}"
 
     - name: rabbitmq1_clustering | start rabbitmq1 app
       command: rabbitmqctl start_app
-      when: inventory_hostname != "rabbitmq-1"
+      when: inventory_hostname != "{{ rabbitmq_master_name }}"
