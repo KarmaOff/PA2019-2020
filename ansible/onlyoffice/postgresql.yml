@@ -48,8 +48,8 @@
     - name: conf postgresql
       shell: |
         sed -i -r "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/11/main/postgresql.conf
-        echo "host    all       onlyoffice             {{ segment-ip }}          md5" >> /etc/postgresql/11/main/pg_hba.conf
-        echo "host    primaryuser    primaryuser      {{ segment-ip }}          md5" >> /etc/postgresql/11/main/pg_hba.conf
+        echo "host    all       onlyoffice             {{ segment_ip }}          md5" >> /etc/postgresql/11/main/pg_hba.conf
+        echo "host    primaryuser    primaryuser      {{ segment_ip }}          md5" >> /etc/postgresql/11/main/pg_hba.conf
       args:
        executable: /bin/bash
 
@@ -88,7 +88,7 @@
 
     - name: conf master pg_hba.conf
       shell: |
-           echo "host    replication       replica            {{ segment-ip }}          trust" >> /etc/postgresql/11/main/pg_hba.conf
+           echo "host    replication       replica            {{ segment_ip }}          trust" >> /etc/postgresql/11/main/pg_hba.conf
       args:
        executable: /bin/bash
       when: inventory_hostname != "{{ pgsql_slave_name }}"
