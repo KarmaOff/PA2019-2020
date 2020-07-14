@@ -1,18 +1,18 @@
-- name: Common pre-requisites
-  hosts: all
+- name: playbook postgresql onlyoffice
+  hosts: "{{ pgsql_ansible_hostsgroup }}"
   gather_facts: yes
-  tags: [common]
-  vars:
-    db_password: “onlyoffice”
+  vars_files: onlyoffice-vars.yml
 
   tasks:
+    - include_vars: onlyoffice-vars.yml
     - name: Update repositories cache and install "postgresql" package
       apt:
        name: postgresql-11
        update_cache: yes
-    - name: Update repositories cache and install "postgresql-client" package
-        apt:
-         name: postgresql-client-11
+
+    - name: install "postgresql-client" package
+      apt:
+       name: postgresql-client-11
 
     - name: drop/create cluster 11
       shell: |
@@ -28,27 +28,28 @@
 
     - name: cat conf sql
       shell: |
-        cat << EOF > /tmp/oo.sql
+        cat << EOF > /tmp/only.sql
         create user onlyoffice createdb;
         alter user onlyoffice password 'onlyoffice';
         create database onlyoffice owner onlyoffice;
         GRANT ALL PRIVILEGES ON DATABASE onlyoffice TO onlyoffice;
+        create user primaryuser with password 'primaryuser';
         EOF
       args:
        executable: /bin/bash
 
     - name: input et rm du script sql
       shell: |
-        sudo su -c "psql -d template1 -f /tmp/oo.sql" - postgres
-        rm /data/next.sql
+        su -c "psql -d template1 -f /tmp/only.sql" - postgres
+        rm /tmp/only.sql
       args:
        executable: /bin/bash
 
     - name: conf postgresql
       shell: |
         sed -i -r "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/11/main/postgresql.conf
-        sed -i "/host    replication     all/d" /etc/postgresql/11/main/pg_hba.conf
-        echo "host    all       onlyoffice             192.168.0.0/24          md5" >> /etc/postgresql/11/main/pg_hba.conf
+        echo "host    all       onlyoffice             {{ segment_ip }}          md5" >> /etc/postgresql/11/main/pg_hba.conf
+        echo "host    primaryuser    primaryuser      {{ segment_ip }}          md5" >> /etc/postgresql/11/main/pg_hba.conf
       args:
        executable: /bin/bash
 
@@ -58,54 +59,94 @@
        state: restarted
 
 
+    - name: conf master postgresql.conf
+      shell: |
+        sed -i -r "s/#wal_level = replica/wal_level = hot_standby/g" /etc/postgresql/11/main/postgresql.conf
+        sed -i -r "s/#synchronous_commit = on/synchronous_commit = local/g" /etc/postgresql/11/main/postgresql.conf        
+        sed -i -r "s/#max_wal_senders = 10/max_wal_senders = 2/g" /etc/postgresql/11/main/postgresql.conf  
+        sed -i -r "s/#wal_keep_segments = 0/wal_keep_segments = 10/g" /etc/postgresql/11/main/postgresql.conf 
+        echo "synchronous_standby_names = '{{ pgsql_slave_name }}'" >> /etc/postgresql/11/main/postgresql.conf    
+      args:
+       executable: /bin/bash
 
-- name: Setup pgslave
-  hosts: pgslave
-become: yes
-become_method: sudo
-gather_facts: yes
-tags: [pgslave]
-vars:
-replica_password: ‘replica123’
-tasks:
-- name: Stop PostgreSQL server
-systemd:
-name: postgresql-9.6
-state: stopped
-- name: Move data backup
-shell: mv data data-backup
-args:
-chdir: /var/lib/pgsql/9.6/
-- name: Create data directory
-file:
-path: /var/lib/pgsql/9.6/data
-mode: 0700
-owner: postgres
-group: postgres
-state: directory
-- name: Backup initial data from master
-shell: su - postgres -c “PGPASSWORD={{ replica_password }} pg_basebackup -w -h {{ hostvars[‘host1’].ansible_default_ipv4.address }} -U replica -D /var/lib/pgsql/9.6/data -P --xlog”
-- name: Update /var/lib/pgsql/9.6/data/postgresql.conf
-lineinfile:
-path: /var/lib/pgsql/9.6/data/postgresql.conf
-regexp: “{{ item.regexp }}”
-line: “{{ item.line }}”
-with_items:
-- { regexp: “#listen_addresses = ‘localhost’”, line: “listen_addresses = ‘{{ ansible_default_ipv4.address }}’” }
-- { regexp: “#hot_standby = off”, line: “hot_standby = on” }
-- name: Create recovery.conf
-blockinfile:
-path: /var/lib/pgsql/9.6/data/recovery.conf
-block: |
-standby_mode = ‘on’
-primary_conninfo = ‘host={{ hostvars[‘host1’].ansible_default_ipv4.address }} port=5432 user=replica password={{ replica_password }} application_name=slave01’
-trigger_file = ‘/tmp/postgresql.trigger.5432’
-mode: 0600
-owner: postgres
-group: postgres
-state: present
-create: yes
-- name: Start PostgreSQL server
-systemd:
-name: postgresql-9.6
-state: started
+    - name: conf master postgresql.conf
+      shell: |
+        sed -i -r "s/#hot_standby = on/hot_standby = on/g" /etc/postgresql/11/main/postgresql.conf    
+      args:
+       executable: /bin/bash
+      when: inventory_hostname != "{{ pgsql_master_name }}"
+
+#    - name: conf archive master
+#      shell: |
+#        echo "archive_command = 'cp %p /var/lib/postgresql/11/main/archive/%f'" >> /etc/postgresql/11/main/postgresql.conf
+#        mkdir -p /var/lib/postgresql/11/main/archive/
+#        chmod 700 /var/lib/postgresql/11/main/archive/
+#        chown -R postgres:postgres /var/lib/postgresql/11/main/archive/
+#      args:
+#       executable: /bin/bash
+#      when: inventory_hostname != "{{ pgsql_slave_name }}"
+
+    - name: conf master pg_hba.conf
+      shell: |
+           echo "host    replication       replica            {{ segment_ip }}          trust" >> /etc/postgresql/11/main/pg_hba.conf
+      args:
+       executable: /bin/bash
+      when: inventory_hostname != "{{ pgsql_slave_name }}"
+    
+    - name: cat conf sql replica master
+      shell: |
+        cat << EOF > /tmp/replica.sql
+        CREATE USER replica REPLICATION LOGIN CONNECTION LIMIT -1 ENCRYPTED PASSWORD 'Espoir15';
+        EOF
+      args:
+       executable: /bin/bash
+  
+    - name: input et rm du script sql
+      shell: |
+        su -c "psql -d template1 -f /tmp/replica.sql" - postgres
+        rm /tmp/replica.sql
+      args:
+       executable: /bin/bash
+    
+    - name: Restart service postgresql 11
+      service:
+       name: postgresql
+       state: restarted
+
+    - name: Stop service postgresql 11 slave
+      service:
+       name: postgresql
+       state: stopped
+      when: inventory_hostname != "{{ pgsql_master_name }}"
+
+    - name: conf slave recovery
+      shell: |
+        rm -rf /data/11/main/*
+        su -c "pg_basebackup -h {{ pgsql_master_ip }} -U replica -D /data/11/main -R -X stream" - postgres     
+      args:
+       executable: /bin/bash
+      when: inventory_hostname != "{{ pgsql_master_name }}"
+    
+    - name: cat recovery.conf
+      shell: |
+        cat << EOF > /data/11/main/recovery.conf
+        standby_mode = 'on'
+        primary_conninfo = 'host={{ pgsql_master_ip }} port=5432 user=replica password=Espoir15 application_name={{ pgsql_slave_name }}'
+        #restore_command = 'cp /var/lib/postgresql/11/main/archive/%f %p'
+        trigger_file = '/tmp/postgresql.trigger.5432'
+        EOF
+      args:
+       executable: /bin/bash
+      when: inventory_hostname != "{{ pgsql_master_name }}"
+    
+    - name: ch mod own slave recovery 
+      shell: |
+        chmod 600 /data/11/main/recovery.conf
+      args:
+       executable: /bin/bash
+      when: inventory_hostname != "{{ pgsql_master_name }}"
+  
+    - name: Restart service postgresql 11
+      service:
+       name: postgresql
+       state: restarted

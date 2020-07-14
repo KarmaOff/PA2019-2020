@@ -1,3 +1,8 @@
 rabbitmq_ansible_hostsgroup: rabbitmq-onlyoffice
 rabbitmq_master_name: rabbitmq-1
 rabbitmq_master_ip: 192.168.40.41
+pgsql_ansible_hostsgroup: psql-onlyoffice
+pgsql_master_name: pgsqlo1
+pgsql_slave_name: pgsqlo2
+pgsql_master_ip: 192.168.40.111
+segment_ip: 192.168.40.0/24
