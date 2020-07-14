@@ -1,6 +1,7 @@
 
 - name: Lancement playbook Install OnlyOffice-plugin
   hosts: "{{ nextcloud_ansible_hostsgroup }}"
+  vars_files: nextcloud_vars.yml
 
   tasks:
 
