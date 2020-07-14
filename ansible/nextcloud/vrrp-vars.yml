@@ -1,6 +1,6 @@
 service_name: haproxy
-vrrp_ip: 192.168.20.90/24
+vrrp_ip: 192.168.20.80/24
 interface_name: eth0
 master_name: haproxyn-1
 slave_name: haproxyn-2
-ansible_hostsgroup: haproxy-back-nextcloud
+ansible_hostsgroup: haproxy-front-nextcloud
