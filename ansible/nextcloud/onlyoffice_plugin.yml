@@ -1,0 +1,22 @@
+
+- name: Lancement playbook Install OnlyOffice-plugin
+  hosts: "{{ nextcloud_ansible_hostsgroup }}"
+
+- name: telechargement OnlyOffice plugin 4.3 tar.bz
+  get_url:
+     url:
+         https://github.com/ONLYOFFICE/onlyoffice-nextcloud/releases/download/v4.3.0/onlyoffice.tar.gz
+     dest: /tmp/
+
+- name: unarchive and move to apps
+  unarchive:
+        src: /tmp/onlyoffice.tar.gz
+       dest: apps/
+ remote_src: yes
+
+-name: Change file ownership, group and permissions
+ file:
+ path: /apps/onlyoffice
+        owner: www-data
+        group: www-data
+        recurse: yes
