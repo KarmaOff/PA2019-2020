@@ -5,4 +5,10 @@ pgsql_ansible_hostsgroup: psql-onlyoffice
 pgsql_master_name: pgsqlo1
 pgsql_slave_name: pgsqlo2
 pgsql_master_ip: 192.168.40.111
+pgsql_slave_ip: 192.168.40.112
 segment_ip: 192.168.40.0/24
+haproxy_back_ansible_hostsgroup: haproxy-back-onlyoffice
+redis1_ip: 192.168.40.31
+redis2_ip: 192.168.40.32
+redis1_port: 6379
+redis2_port: 6380
