@@ -65,8 +65,8 @@
                 stats enable
                 stats uri /stats
                 stats auth adminesgi:adminesgi
-                server {{ nextcloud_1_name }} 192.168.20.21:80 maxconn 50 cookie check inter 10s
-                server nextcloud-2 192.168.20.22:80 maxconn 50 cookie check inter 10s
+                server {{ nextcloud_1_name }} 192.168.20.21:80 cookie check inter 60s n1
+                server nextcloud-2 192.168.20.22:80 cookie check inter 60s n2
 
 
         EOF
