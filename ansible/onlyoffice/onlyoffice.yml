@@ -65,12 +65,12 @@
 
     - name: Set up redis host name
       shell: "{{ json }} -I -e 'this.services.CoAuthoring.redis.host  = \"192.168.40.90\"'"
-      notify: restart-ds
+
 
     - name: Set up redis port number
       shell: "{{ json }} -I -e 'this.services.CoAuthoring.redis.port  = \"6379\"'"
-      notify: restart-ds
+
 
     - name: Set up rabbitmq url
       shell: "{{ json }} -I -e 'this.rabbitmq.url = \"{{ rabbitmq_server_url }}\"'"
-      notify: restart-ds
+   
