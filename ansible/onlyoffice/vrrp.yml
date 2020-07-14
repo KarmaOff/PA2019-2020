@@ -1,0 +1,123 @@
+- name: Installation et configuration du VRRP pour sidekick
+  hosts: "{{ ansible_hostsgroup }}"
+  gather_facts: yes
+  vars_files: vrrp-vars.yml
+
+  
+
+  tasks:
+    - include_vars: vrrp-vars.yml
+
+    - name: Update repositories cache and install "linux headers" package
+      apt:
+       name: "linux-headers-amd64"
+       update_cache: yes
+
+    - name: Update repositories cache and install "keepalived" package
+      apt:
+       name: "keepalived"
+       update_cache: yes
+
+    - name: Update repositories cache and install "psmisc" package
+      apt:
+       name: "psmisc"
+       update_cache: yes
+
+
+    - name: cat conf master vrrp
+      shell: |
+        cat << EOF > /etc/keepalived/keepalived.conf
+        global_defs {
+          notification_email {
+            vrrp@maildudek.fr
+          }
+          notification_email_from noreply@maildudek.fr
+          smtp_server localhost
+          smtp_connect_timeout 30
+          router_id 101
+        }
+
+        vrrp_sync_group VG1 {
+        group {
+        {{ master_name }}
+        }
+        }
+
+        vrrp_script chk_{{ service_name }} {
+          script "killall -0 {{ service_name }}" # check the {{ service_name }} process
+          interval 2 # every 2 seconds
+        }
+
+        vrrp_instance {{ master_name }} {
+            state MASTER
+            interface {{ interface_name }}
+            virtual_router_id 10
+            priority 200
+            advert_int 1
+            authentication {
+                auth_type PASS
+                auth_pass 1111
+            }
+            virtual_ipaddress {
+                {{ vrrp_ip }} dev {{ interface_name }}
+            }
+            track_script {
+              chk_{{ service_name }}
+            }
+        }
+        EOF
+      args:
+       executable: /bin/bash
+      when: inventory_hostname != "{{ slave_name }}"
+
+    - name: cat conf slave vrrp
+      shell: |
+        cat << EOF > /etc/keepalived/keepalived.conf
+        global_defs {
+          notification_email {
+            vrrp@maildudek.fr
+          }
+          notification_email_from noreply@maildudek.fr
+          smtp_server localhost
+          smtp_connect_timeout 30
+          router_id 102
+        }
+
+        vrrp_sync_group VG1 {
+        group {
+        {{ slave_name }}
+        }
+        }
+
+        vrrp_script chk_{{ service_name }} {
+          script "killall -0 {{ service_name }}" # check the {{ service_name }} process
+          interval 2 # every 2 seconds
+        }
+
+
+        vrrp_instance {{ slave_name }} {
+            state BACKUP
+            interface {{ interface_name }}
+            virtual_router_id 10
+            priority 100
+            advert_int 1
+            authentication {
+                auth_type PASS
+                auth_pass 1111
+            }
+            virtual_ipaddress {
+                {{ vrrp_ip }} dev {{ interface_name }}
+            }
+            track_script {
+              chk_{{ service_name }}
+            }
+        }
+        EOF
+      args:
+       executable: /bin/bash
+      when: inventory_hostname != "{{ master_name }}"
+
+    - name:  restart service keepalived
+      systemd:
+        state: restarted
+        name: keepalived

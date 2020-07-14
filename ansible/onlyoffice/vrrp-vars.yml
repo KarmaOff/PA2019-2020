@@ -1,0 +1,6 @@
+service_name: haproxy
+vrrp_ip: 192.168.40.90/24
+interface_name: eth0
+master_name: haproxyo-3
+slave_name: haproxyo-4
+ansible_hostsgroup: haproxy-back-onlyoffice

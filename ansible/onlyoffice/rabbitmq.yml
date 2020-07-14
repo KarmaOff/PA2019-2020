@@ -78,3 +78,8 @@
     - name: rabbitmq1_clustering | start {{ rabbitmq_master_name }} app
       command: rabbitmqctl start_app
       when: inventory_hostname != "{{ rabbitmq_master_name }}"
+
+    - name: Restart service rabbitmq-server
+      service:
+       name: rabbitmq-server
+       state: restarted
