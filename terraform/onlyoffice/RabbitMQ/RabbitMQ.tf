@@ -11,8 +11,8 @@ resource "proxmox_lxc" "rabbitmq-1" {
     }
     ostemplate = "local:vztmpl/template-debian_v1-0.tar.gz" 
     password = "Espoir15"
-    vmid = "231"
-    rootfs = "local:231" 
+    vmid = "441"
+    rootfs = "local:30" 
     storage = "local"
     target_node = "PAR-212482"
     unprivileged = false
@@ -31,8 +31,8 @@ resource "proxmox_lxc" "rabbitmq-2" {
     }
     ostemplate = "local:vztmpl/template-debian_v1-0.tar.gz" 
     password = "Espoir15"
-    vmid = "232"
-    rootfs = "local:232" 
+    vmid = "442"
+    rootfs = "local:30" 
     storage = "local"
     target_node = "PAR-212482"
     unprivileged = false
@@ -51,8 +51,8 @@ resource "proxmox_lxc" "rabbitmq-3" {
     }
     ostemplate = "local:vztmpl/template-debian_v1-0.tar.gz" 
     password = "Espoir15"
-    vmid = "232"
-    rootfs = "local:232" 
+    vmid = "442"
+    rootfs = "local:30" 
     storage = "local"
     target_node = "PAR-212482"
     unprivileged = false

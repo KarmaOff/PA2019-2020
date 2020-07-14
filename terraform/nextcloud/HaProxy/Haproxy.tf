@@ -51,7 +51,7 @@ resource "proxmox_lxc" "HaproxyN-3" {
     }
     ostemplate = "local:vztmpl/template-debian_v1-0.tar.gz" 
     password = "Espoir15"
-    vmid = "283"
+    vmid = "291"
     rootfs = "local:8" 
     storage = "local"
     target_node = "PAR-212482"
@@ -71,7 +71,7 @@ resource "proxmox_lxc" "HaproxyN-4" {
     }
     ostemplate = "local:vztmpl/template-debian_v1-0.tar.gz" 
     password = "Espoir15"
-    vmid = "284"
+    vmid = "292"
     rootfs = "local:8" 
     storage = "local"
     target_node = "PAR-212482"

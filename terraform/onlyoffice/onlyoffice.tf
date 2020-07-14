@@ -5,13 +5,13 @@ resource "proxmox_lxc" "onlyoffice-1" {
     swap = "4096"
     network {
         name = "eth0"
-        bridge = "vmbr2"
+        bridge = "vmbr3"
         ip = "192.168.40.21/24" 
         gw = "192.168.40.254" 
     }
     ostemplate = "local:vztmpl/template-debian_v1-0.tar.gz" 
     password = "Espoir15"
-    vmid = "221"
+    vmid = "421"
     rootfs = "local:30" 
     storage = "local"
     target_node = "PAR-212482"
@@ -25,13 +25,13 @@ resource "proxmox_lxc" "onlyoffice-2" {
     swap = "4096"
     network {
         name = "eth0"
-        bridge = "vmbr2"
+        bridge = "vmbr3"
         ip = "192.168.40.22/24"  
         gw = "192.168.40.254"
     }
     ostemplate = "local:vztmpl/template-debian_v1-0.tar.gz" 
     password = "Espoir15"
-    vmid = "222"
+    vmid = "422"
     rootfs = "local:30" 
     storage = "local"
     target_node = "PAR-212482"

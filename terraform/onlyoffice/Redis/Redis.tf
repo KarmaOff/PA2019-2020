@@ -11,7 +11,7 @@ resource "proxmox_lxc" "Rediso-1" {
     }
     ostemplate = "local:vztmpl/template-debian9_v1-0.tar.gz" 
     password = "Espoir15"
-    vmid = "231"
+    vmid = "431"
     rootfs = "local:20" 
     storage = "local"
     target_node = "PAR-212482"
@@ -31,7 +31,7 @@ resource "proxmox_lxc" "Rediso-2" {
     }
     ostemplate = "local:vztmpl/template-debian9_v1-0.tar.gz" 
     password = "Espoir15"
-    vmid = "232"
+    vmid = "432"
     rootfs = "local:20" 
     storage = "local"
     target_node = "PAR-212482"
