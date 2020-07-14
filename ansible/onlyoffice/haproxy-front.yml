@@ -63,6 +63,10 @@
                 option httplog
                 option httpchk GET /healthcheck 
                 http-check expect string true
+                acl existing-x-forwarded-host req.hdr(X-Forwarded-Host) -m found
+                acl existing-x-forwarded-proto req.hdr(X-Forwarded-Proto) -m found
+                http-request add-header X-Forwarded-Proto https unless existing-x-forwarded-proto
+                http-request add-header X-Forwarded-Host %[req.hdr(Host)] unless existing-x-forwarded-host
                 stats enable
                 stats uri /stats
                 stats auth adminesgi:adminesgi
