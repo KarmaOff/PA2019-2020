@@ -1,0 +1,10 @@
+hint.apic.0.clock="0"
+kern.hz="100"
+kern.ipc.nmbclusters="131072"
+net.isr.dispatch=deferred
+net.inet.tcp.tso=0
+hw.pci.enable_msix=0
+hw.pci.enable_msi=0
+autoboot_delay="3"
+hw.usb.no_pf="1"
+net.pf.request_maxcount="400000"
